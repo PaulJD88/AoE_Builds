@@ -1,9 +1,27 @@
 const express = require('express')
 const cors = require('cors')
+const sqlite3 = require('sqlite3').verbose()
 const app = express()
 const port = 3000
 
 app.use(cors())
+
+let db = new sqlite3.Database('./aoeiv.db', (err) => {
+  if (err) {
+    console.error(err.message);
+  }
+  console.log('Connected to the aoeiv database.');
+});
+
+db.run('CREATE TABLE builds(name text)', err => {
+  if (err) {
+    console.log('table may already exist', err)
+    return;
+  }
+  console.log('create a table')
+});
+
+db.close();
 
 app.get('/', (req, res) => {
   res.send('Hello World!')
