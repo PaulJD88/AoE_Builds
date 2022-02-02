@@ -12,17 +12,18 @@ let db = new sqlite3.Database('./aoeiv.db', (err) => {
     console.error(err.message);
   }
   console.log('Connected to the aoeiv database.');
+
+  console.log ('about to create build')
+  db.run('CREATE TABLE builds(name text, subheading text, url text)', err => {
+    if (err) {
+      console.log('table may already exist', err)
+      return;
+    }
+    console.log('create a table')
+  });
+  console.log ('created builds table')
 });
 
-db.run('CREATE TABLE builds(name text)', err => {
-  if (err) {
-    console.log('table may already exist', err)
-    return;
-  }
-  console.log('create a table')
-});
-
-db.close();
 let builds= [
   {
       id: 1,
@@ -125,13 +126,23 @@ app.get('/', (req, res) => {
   res.send('Hello World!')
 })
 
-app.get('/builds', (req, res) => {
-    res.send(builds)
-  })
+app.get("/builds", (req, res, next) => {
+  var sql = "select * from builds"
+  var params = []
+  db.all(sql, params, (err, rows) => {
+      if (err) {
+        res.status(400).json({"error":err.message});
+        return;
+      }
+      res.json(rows)
+    });
+});
 
 app.post('/builds', (req, res) => {
   console.log('We Got The Post Request!', req.body)
   builds.push(req.body);
+  var insertBuildQueryString = 'INSERT INTO builds (name, subheading, url) VALUES (?,?,?)'
+  db.run(insertBuildQueryString, [req.body.name, req.body.subheading, req.body.url])
     res.send()
   })
 
