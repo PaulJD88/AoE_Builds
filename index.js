@@ -14,13 +14,13 @@ let db = new sqlite3.Database('./aoeiv.db', (err) => {
   console.log('Connected to the aoeiv database.');
 
   console.log ('about to create build')
-  db.run('CREATE TABLE builds(name text, subheading text, url text)', err => {
+  db.run('CREATE TABLE builds(name text, subheading text, url text, build text)', err => {
     if (err) {
       console.log('table may already exist', err)
       return;
     }
     console.log('create a table')
-  });
+  })
   console.log ('created builds table')
 });
 
@@ -30,7 +30,7 @@ let builds= [
     name: "",
     subheading: "",
     url: "",
-    order: ""
+    build: ""
 }
 ]
 app.get('/', (req, res) => {
@@ -52,8 +52,8 @@ app.get("/builds", (req, res, next) => {
 app.post('/builds', (req, res) => {
   console.log('We Got The Post Request!', req.body)
   builds.push(req.body);
-  var insertBuildQueryString = 'INSERT INTO builds (name, subheading, url) VALUES (?,?,?)'
-  db.run(insertBuildQueryString, [req.body.name, req.body.subheading, req.body.url])
+  var insertBuildQueryString = 'INSERT INTO builds (name, subheading, url, build) VALUES (?,?,?,?)'
+  db.run(insertBuildQueryString, [req.body.name, req.body.subheading, req.body.url, req.body.build])
     res.send()
   })
 
