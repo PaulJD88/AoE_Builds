@@ -14,7 +14,7 @@ let db = new sqlite3.Database('./aoeiv.db', (err) => {
   console.log('Connected to the aoeiv database.');
 
   console.log ('about to create build')
-  db.run('CREATE TABLE builds(name text, subheading text, url text, build text)', err => {
+  db.run('CREATE TABLE builds(id INTEGER PRIMARY KEY, civilisation_name text, build_name text, build_order text, url text)', err => {
     if (err) {
       console.log('table may already exist', err)
       return;
@@ -24,15 +24,15 @@ let db = new sqlite3.Database('./aoeiv.db', (err) => {
   console.log ('created builds table')
 });
 
-let builds= [
-  {
-    id: 1,
-    name: "",
-    subheading: "",
-    url: "",
-    build: ""
-}
-]
+// let builds= [
+//   {
+//     id: 1,
+//     civilisationName: "",
+//     buildName: "",
+//     buildOrder: "",
+//     url: ""
+// }
+// ]
 app.get('/', (req, res) => {
   res.send('Hello World!')
 })
@@ -51,9 +51,9 @@ app.get("/builds", (req, res, next) => {
 
 app.post('/builds', (req, res) => {
   console.log('We Got The Post Request!', req.body)
-  builds.push(req.body);
-  var insertBuildQueryString = 'INSERT INTO builds (name, subheading, url, build) VALUES (?,?,?,?)'
-  db.run(insertBuildQueryString, [req.body.name, req.body.subheading, req.body.url, req.body.build])
+  // builds.push(req.body);
+  var insertBuildQueryString = 'INSERT INTO builds (civilisation_name, build_name, build_order, url) VALUES (?,?,?,?)'
+  db.run(insertBuildQueryString, [req.body.civilisation_name, req.body.build_name, req.body.build_order, req.body.url])
     res.send()
   })
 
@@ -62,9 +62,10 @@ app.listen(port, () => {
 })
 
   // {
-  //     id: 1,
-  //     name: "How to play",
-  //     subheading: "The Abbasid Dynasty is a 2 Stars Difficulty civilization that, in many ways, does not play very differently from others at first glance.",
+  //     id: the unique ID for each record in the database,
+  //     civilisation name: Name of the civilisation eg "English"
+  //     build name: Name of the build eg "How to play"
+  //     build order: Detailed description of build order
   //     url: "https://diamondlobby.com/age-of-empires-4/how-to-play-the-abbasids-in-aoe4/"
   // },
   // {
