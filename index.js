@@ -49,6 +49,19 @@ app.get("/builds", (req, res, next) => {
     });
 });
 
+app.get("/builds/:civ", (req, res, next) => {
+  var sql = `select * from builds where civilisation_name = "${req.params.civ}"`
+  var params = []
+  console.log(req.params.civ)
+  db.all(sql, params, (err, rows) => {
+      if (err) {
+        res.status(400).json({"error":err.message});
+        return;
+      }
+      res.json(rows)
+    });
+});
+
 app.post('/builds', (req, res) => {
   console.log('We Got The Post Request!', req.body)
   // builds.push(req.body);
